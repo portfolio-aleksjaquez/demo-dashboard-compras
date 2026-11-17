@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
+    "build": "vite build",
+    "test": "node fixtures/parser-hardening/parser-cases.js && node fixtures/parser-hardening/fingerprint-cases.js && node fixtures/parser-hardening/import-cases.js && node fixtures/backup-restore-cases.js && node fixtures/statistics-cases.js"
+  },
+  "devDependencies": {
+    "vite": "8.1.5"
+  }
+}

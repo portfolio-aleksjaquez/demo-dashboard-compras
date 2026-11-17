@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard de Compras · Demo</title>
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+  <body>
+    <div id="app" class="app">
+      <header class="app__header">
+        <div class="app__brand">
+          <span class="app__logo" aria-hidden="true">🧾</span>
+          <div>
+            <h1 class="app__title">Dashboard de Compras</h1>
+            <p class="app__subtitle">Registra tus tickets y analiza tus gastos</p>
+          </div>
+        </div>
+        <div class="app__actions" id="header-actions"></div>
+      </header>
+
+      <div id="demo-notice" class="demo-notice"></div>
+
+      <nav class="app-tabs" role="tablist" aria-label="Secciones principales">
+        <button id="purchases-tab" class="app-tab app-tab--active" type="button" role="tab" data-tab="purchases" aria-controls="purchases-panel" aria-selected="true">Compras</button>
+        <button id="statistics-tab" class="app-tab" type="button" role="tab" data-tab="statistics" aria-controls="statistics-panel" aria-selected="false">Estadísticas</button>
+      </nav>
+
+      <main class="app__main">
+        <div id="purchases-panel" class="tab-panel" role="tabpanel" aria-labelledby="purchases-tab">
+          <section id="importer" class="section"></section>
+
+          <div class="empty" data-when-empty>
+            <span class="empty__icon" aria-hidden="true">🗂️</span>
+            <p class="empty__title">Todavía no hay tickets</p>
+            <p class="empty__text">Sigue los tres pasos de arriba o usa <strong>+ Nuevo ticket</strong> para capturar uno a mano.</p>
+          </div>
+
+          <!-- Shared by both tabs: moved into the active panel on tab change. -->
+          <div id="period-bar" data-requires-data></div>
+
+          <section id="summary" class="section" data-requires-data></section>
+
+          <section class="section" data-requires-data>
+            <div class="section__head">
+              <h2 class="section__title">Historial</h2>
+              <div class="history__controls">
+                <span class="history__caption" id="list-caption" aria-live="polite"></span>
+                <div class="segmented" role="group" aria-label="Ver historial por">
+                  <button type="button" class="segmented__button" data-view="tickets" aria-pressed="true">Tickets</button>
+                  <button type="button" class="segmented__button" data-view="products" aria-pressed="false">Productos</button>
+                </div>
+              </div>
+            </div>
+            <div id="filters"></div>
+            <div id="list"></div>
+          </section>
+        </div>
+
+        <div id="statistics-panel" class="tab-panel" role="tabpanel" aria-labelledby="statistics-tab" hidden>
+          <section id="statistics" class="section"></section>
+        </div>
+      </main>
+    </div>
+
+    <div id="toast-root" class="toast-root" aria-live="polite" popover="manual"></div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
