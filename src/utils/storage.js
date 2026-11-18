@@ -4,6 +4,7 @@
 const STORAGE_KEY = "compras-dashboard:products";
 const FILTERS_STORAGE_KEY = "compras-dashboard:filters";
 const DEMO_META_KEY = "compras-dashboard:demo-seed";
+const TUTORIAL_SEEN_KEY = "compras-dashboard:tutorial-seen";
 
 /** Load the persisted product list. Returns `[]` on any failure. */
 export function loadProducts() {
@@ -77,5 +78,26 @@ export function saveDemoMeta(meta) {
     localStorage.setItem(DEMO_META_KEY, JSON.stringify(meta));
   } catch (error) {
     console.error("No se pudo guardar el estado de la demo:", error);
+  }
+}
+
+/**
+ * Tutorial "¿Cómo funciona?": `true` once it has been shown in this browser.
+ * It is deliberately separate from the history and the demo seed, so neither
+ * "Reiniciar datos de demo" nor "Borrar todo" bring the tutorial back.
+ */
+export function hasSeenTutorial() {
+  try {
+    return localStorage.getItem(TUTORIAL_SEEN_KEY) !== null;
+  } catch {
+    return false;
+  }
+}
+
+export function markTutorialSeen() {
+  try {
+    localStorage.setItem(TUTORIAL_SEEN_KEY, new Date().toISOString());
+  } catch (error) {
+    console.error("No se pudo guardar que el tutorial ya se mostró:", error);
   }
 }

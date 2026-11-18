@@ -2,13 +2,14 @@
 // persists everything to localStorage.
 
 import {
-  hasStoredProducts, loadDemoMeta, loadFilters, loadProducts, saveDemoMeta, saveFilters, saveProducts,
+  hasSeenTutorial, hasStoredProducts, loadDemoMeta, loadFilters, loadProducts, markTutorialSeen, saveDemoMeta, saveFilters, saveProducts,
 } from "./utils/storage.js";
 import { buildDemoProducts, signature } from "./utils/demoSeed.js";
 import { restoreJsonBackup } from "./utils/restoreJsonBackup.js";
 import { blankDraft, commitTicket, draftFromTicket, draftsFromMarkdown } from "./utils/ticketDraft.js";
 import { buildCategoryMemory, distinctLabels, groupTickets, labelResolver, ticketKey } from "./utils/tickets.js";
 import { buildAiPrompt } from "./utils/aiPrompt.js";
+import { buildSampleTicketMarkdown } from "./utils/sampleTicket.js";
 import { escapeHtml, getPeriodRange, migratePeriod, normalizeText, round2, today, uid } from "./utils/helpers.js";
 
 import { renderDemoNotice } from "./components/DemoNotice.js";
@@ -23,6 +24,7 @@ import { renderPurchaseStatistics } from "./components/PurchaseStatistics.js";
 import { openTicketEditor } from "./components/TicketEditor.js";
 import { confirmDialog, openDialog } from "./components/Dialog.js";
 import { showToast } from "./components/Toast.js";
+import { openTutorial } from "./components/Tutorial.js";
 
 // --- State -----------------------------------------------------------------
 
@@ -204,7 +206,7 @@ function renderShell() {
     onReport: exportMarkdown,
     onClearAll: handleClearAll,
   });
-  renderDemoNotice(els.demoNotice, { onReset: handleResetDemo });
+  renderDemoNotice(els.demoNotice, { onReset: handleResetDemo, onHelp: showTutorial });
   renderImporter(els.importer, {
     onText: handleImportText,
     onFiles: handleFiles,
@@ -477,6 +479,24 @@ function handleDelete(id) {
   applyChange(state.products.filter((p) => p.id !== id), `"${product.producto}" eliminado.`);
 }
 
+// --- Tutorial "¿Cómo funciona?" ----------------------------------------------
+
+/**
+ * Open the tutorial. Showing it (even if closed right away) marks it as seen,
+ * so it only opens by itself on the first visit. The flag lives apart from the
+ * history: "Reiniciar datos de demo" and "Borrar todo" never bring it back.
+ */
+async function showTutorial(opener) {
+  if (state.editorOpen || document.querySelector("dialog[open]")) return;
+  markTutorialSeen();
+  const outcome = await openTutorial({ opener });
+  if (outcome === "example") {
+    // Opens the usual review; nothing is saved until the user confirms.
+    showToast("Ticket de ejemplo listo: revísalo. No se guarda hasta que pulses «Guardar ticket».", "info", 7000);
+    handleImportText(buildSampleTicketMarkdown(), "Ticket de ejemplo");
+  }
+}
+
 // --- Data menu -------------------------------------------------------------
 
 async function handleRestoreJson(file) {
@@ -592,3 +612,5 @@ function exportMarkdown() {
 
 renderShell();
 render();
+
+if (!hasSeenTutorial()) showTutorial(document.querySelector("[data-action='help']"));
